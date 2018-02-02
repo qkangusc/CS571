@@ -1,0 +1,192 @@
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Homework 9</title>
+
+<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.0/css/bootstrap-toggle.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<script
+  src="https://code.jquery.com/jquery-3.2.1.js"
+  integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
+  crossorigin="anonymous"></script>
+ 
+ <!--  <script src="HW8.js"></script> -->
+  <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.0/js/bootstrap-toggle.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<!-- <script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script> -->
+<script src="https://momentjs.com/downloads/moment.min.js"></script>
+<script src="https://code.highcharts.com/stock/highstock.js"></script>
+<script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+</head>
+
+<body>
+<div id="charts"  style="margin-left:10px; margin-right:10px;border:2px solid rgb(211,211,211)"></div>
+
+
+</body>
+</html>
+
+
+<script type="text/javascript">
+	Drawchart();
+
+
+	function Drawchart(){
+	/*	var symbol = Android.passData();*/
+	var symbol = "DUMMY";
+	var indicator = "TIME_SERIES_DAILY"
+		indicator_array= [];
+      var resURL;
+
+
+    $.ajax({
+      url:"http://cambridge2-env.us-west-1.elasticbeanstalk.com/json",
+     /* url:"http://localhost:9090/json",*/
+      data: {symbol: symbol, indicators:indicator},
+      type:"GET",
+      success: function(data){
+     
+  
+      var jsonObj = JSON.parse(data);
+    
+     if(data.length == 2 || data.length == 76 || data.length == 84 || data.length == 152){
+       console.log(data.length);
+        console.log(data.length.toString());
+        console.log(typeof(data.length.toString()));
+        Android.invalid(data.length.toString());
+     }
+   
+     /*****************************************************************************PRICE AND VOLUME********************************************************************   */
+    if((Object.keys(jsonObj)[1] == "Time Series (Daily)" )){
+         indicator_array[0] = jsonObj;
+ //***************************************************************判断星星********************************************************//
+     
+    //*************************************************************画左边的表格***********************************************************//    
+          var mydata = jsonObj['Time Series (Daily)'];
+          var symbol = jsonObj['Meta Data']["2. Symbol"];
+          var date = jsonObj['Meta Data']["3. Last Refreshed"];
+         
+       price = [];
+       var count = 0;
+       date_array=[];
+      /* symbol = jsonObj['Meta Data']["2. Symbol"];*/
+       for(var k in mydata){
+            price.unshift(parseFloat(mydata[k]['4. close'])); 
+            date_array.unshift(k); 
+            count++; 
+            if(count == 1000){break;}
+
+        }
+        var ts = [];
+        for(var i = 0; i < date_array.length; i++){
+           date_array[i] = date_array[i].substring(0,4)+'/'+date_array[i].substring(5,7)+'/'+date_array[i].substring(8,10);
+           ts[i] = moment(date_array[i], "YYYY/MM/DD").valueOf();
+        }
+
+
+       Array.prototype.zip = function (arr) {
+           return this.map(function (e, i) {
+           return [e, arr[i]];
+         })
+        };
+        console.log(ts.zip(price));
+        var insertData = ts.zip(price);
+
+       Highcharts.stockChart('charts', {
+       rangeSelector: {
+            buttons: [{
+                type: 'week',
+                count: 1,
+                text: '1w'
+            }, 
+            {   
+                type: 'month',
+                count:1,
+                text:'1m'
+
+            },
+            {   
+                type: 'month',
+                count:3,
+                text:'3m'
+
+            },
+            {   
+                type: 'month',
+                count:6,
+                text:'6m'
+
+            },
+            {   
+                type: 'ytd',
+                count:1,
+                text:'YTD'
+
+            },
+            {   
+                type: 'year',
+                count:1,
+                text:'1y'
+
+            },
+             {
+                type: 'all',
+                count: 1,
+                text: 'All'
+            }],
+            selected: 1,
+            inputEnabled: true
+        },
+
+
+        title: {
+            text: '<b>'+symbol.toUpperCase() +' Stock Value</b>'
+        },
+        subtitle:{
+            text: '<a href="https://www.alphavantage.co/" target="_blank">Source: Alpha Vantage</a>',
+            useHTML:true
+
+        },
+       tooltip: {
+                split: false
+            },
+
+        series: [{
+            name:  symbol.toUpperCase()+' Stock Price',
+            data: insertData,
+            type: 'areaspline',
+            threshold: null,
+            tooltip: {
+                valueDecimals: 2
+
+            },
+            fillColor: {
+                linearGradient: {
+                    x1: 0,
+                    y1: 0,
+                    x2: 0,
+                    y2: 1
+                },
+                stops: [
+                    [0, Highcharts.getOptions().colors[0]],
+                    [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                ]
+            }
+        }]
+    });
+        Android.setData(resURL);
+      
+}
+
+     },error:function(){
+        console.log("error");
+      }
+     });      
+    
+}
+
+
+</script>

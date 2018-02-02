@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+
+    tools:context="com.example.qiaokang.homework9.MainActivity"
+    android:background="@drawable/restaurant">
+
+
+
+
+    <AutoCompleteTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="18dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="50dp"
+        android:id="@+id/StockTicker"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:gravity="center"
+        android:inputType="textNoSuggestions"
+        android:textColorLink="@android:color/background_light"
+        android:textColorHint="@android:color/background_light"
+        android:backgroundTint="@android:color/background_dark"
+        android:textColor="@android:color/background_light" />
+
+    <TextView
+        android:text="Clear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/getQuote"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="50dp"
+        android:layout_marginEnd="40dp"
+        android:id="@+id/clear"
+        android:textSize="25sp"
+        android:textColor="@color/colorPrimaryDark"
+        android:onClick="clear" />
+
+    <TextView
+        android:text="Get Quote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="20dp"
+        android:id="@+id/getQuote"
+        android:textSize="25sp"
+        android:textColor="@color/colorPrimaryDark"
+        android:layout_below="@+id/StockTicker"
+        android:layout_alignLeft="@+id/StockTicker"
+        android:layout_alignStart="@+id/StockTicker"
+        android:onClick="onClick" />
+
+    <TextView
+        android:text="Favorites"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:id="@+id/textView4"
+        android:textSize="18sp"
+        android:textColor="@android:color/background_light"
+        android:layout_below="@+id/getQuote"
+        android:layout_alignLeft="@+id/getQuote"
+        android:layout_alignStart="@+id/getQuote"
+        android:layout_marginStart="1dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Stock Market Search"
+        android:gravity="center"
+        android:textSize="30sp"
+        android:textColor="@android:color/background_light"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Spinner
+        android:layout_height="wrap_content"
+        android:layout_marginTop="45dp"
+        android:id="@+id/spinner1"
+        android:layout_width="60dp"
+        android:layout_below="@+id/autofresh"
+        android:layout_alignLeft="@+id/getQuote"
+        android:layout_alignStart="@+id/getQuote"
+        android:layout_alignRight="@+id/getQuote"
+        android:layout_alignEnd="@+id/getQuote" />
+
+    <Spinner
+        android:layout_height="wrap_content"
+        android:id="@+id/spinner2"
+        android:layout_width="110dp"
+        android:layout_alignTop="@+id/spinner1"
+        android:layout_alignRight="@+id/clear"
+        android:layout_alignEnd="@+id/clear" />
+
+    <TextView
+        android:text="Sort By"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/Sort"
+        android:layout_above="@+id/spinner2"
+        android:layout_alignLeft="@+id/textView4"
+        android:layout_alignStart="@+id/textView4"
+        android:layout_marginLeft="12dp"
+        android:layout_marginStart="12dp" />
+
+    <TextView
+        android:text="Order"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/Order"
+        android:layout_above="@+id/spinner2"
+        android:layout_toLeftOf="@+id/clear"
+        android:layout_toStartOf="@+id/clear" />
+
+    <Switch
+        android:text="AutoRefresh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/autofresh"
+        android:textColor="@android:color/background_light"
+        android:layout_alignTop="@+id/textView4"
+        android:layout_alignRight="@+id/spinner2"
+        android:layout_alignEnd="@+id/spinner2" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView"
+        android:layout_alignTop="@+id/autofresh"
+        android:layout_toRightOf="@+id/autofresh"
+        android:layout_toEndOf="@+id/autofresh" />
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/spinner1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:id="@+id/FavoriteList" />
+
+    <ProgressBar
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/spinner2"
+        android:layout_toLeftOf="@+id/spinner2"
+        android:layout_toStartOf="@+id/spinner2"
+        android:id="@+id/progressBar" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/refresh"
+        android:background="@android:drawable/stat_notify_sync"
+        android:layout_alignBottom="@+id/autofresh"
+        android:layout_toRightOf="@+id/imageView"
+        android:layout_toEndOf="@+id/imageView"
+        android:onClick="refresh" />
+
+</RelativeLayout>

@@ -1,0 +1,212 @@
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Homework 9</title>
+
+<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.0/css/bootstrap-toggle.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<script
+  src="https://code.jquery.com/jquery-3.2.1.js"
+  integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
+  crossorigin="anonymous"></script>
+ 
+ <!--  <script src="HW8.js"></script> -->
+  <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.0/js/bootstrap-toggle.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<!-- <script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script> -->
+<script src="https://momentjs.com/downloads/moment.min.js"></script>
+<script src="https://code.highcharts.com/stock/highstock.js"></script>
+<script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+</head>
+
+<body>
+<div id="charts"  style="margin-left:10px; margin-right:10px;border:2px solid rgb(211,211,211)"></div>
+
+
+</body>
+</html>
+
+
+<script type="text/javascript">
+	Drawchart();
+
+
+	function Drawchart(){
+		var symbol = Android.passData();
+	 /* var symbol = "FB";*/
+	  var indicator = "SMA"
+		indicator_array= [];
+
+
+    $.ajax({
+      url:"http://cambridge2-env.us-west-1.elasticbeanstalk.com/json",
+     /* url:"http://localhost:9090/json",*/
+      data: {symbol: symbol, indicators:indicator},
+      type:"GET",
+      success: function(data){
+     
+  
+      var jsonObj = JSON.parse(data);
+    
+     if(data.length == 2 || data.length == 76 || data.length == 84 || data.length == 152){
+       falseResult = falseResult + 1;
+     }
+   
+     /*****************************************************************************PRICE AND VOLUME********************************************************************   */
+    if(Object.keys(jsonObj)[1] == "Technical Analysis: SMA" ){
+        indicator_array[0] = jsonObj;
+          exportServer5(indicator_array[0],'SMA','sma');
+   
+     } 
+ },error:function(){
+        console.log("error");
+      }
+     });
+
+ }
+
+ function exportServer5(theObj, what,id){
+  
+           var mydata =  theObj['Technical Analysis: '+ what];
+           var symbol =  theObj['Meta Data']["2: Indicator"];
+           var date =  theObj['Meta Data']["3: Last Refreshed"];
+           var ticker = theObj['Meta Data']["1: Symbol"];
+          /* console.log(symbol);*/
+           var indicator=[]; 
+           var date_array = []; 
+           var count = 0;
+            
+          for(var k in mydata){
+          indicator.unshift(parseFloat(mydata[k][what])); 
+          date_array.unshift(k); 
+          count++; 
+          if(count == 150){break;}
+        }
+  
+       
+           Highcharts.chart('charts', {
+    chart: {
+        zoomType: 'x'
+    },
+    title: {
+         text: symbol
+      
+        
+    },
+    subtitle: {
+        text: '<a href="https://www.alphavantage.co/" target="_blank">Source: Alpha Vantage</a>',
+            useHTML:true
+    },
+    xAxis: [{
+          
+          tickInterval: 5,
+          categories:date_array,
+          labels:{ 
+         formatter: function(){return this.value.substring(5,7)+'/'+this.value.substring(8);}}
+          
+    }],
+    yAxis: [{ 
+        labels: {
+            format: '{value}',
+            
+            style: {
+                color: Highcharts.getOptions().colors[1]
+            }
+        },
+        
+        title: {
+            text: what,
+            style: {
+                color: Highcharts.getOptions().colors[1]
+            }
+        },
+        tickInterval: 5
+       
+    }],
+
+    plotOptions: {
+      series: {
+        marker: {
+          enabled:true,
+          symbol: 'square',
+          radius: 2
+
+        }
+      }
+    },
+
+    tooltip: {
+        shared: false,
+    },
+    legend: {
+        layout: 'horizontal',
+        align: 'center',
+        verticalAlign: 'bottom',
+        labelFormatter: function(){
+        return ticker.toUpperCase() +' '+this.name;
+        },
+        backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'
+    },
+    series: [{
+        name: what,
+        type: 'spline',
+        threshold: null,
+        color: Highcharts.getOptions().colors[8],
+        data:  indicator,
+        tooltip: {
+            valueSuffix: ''
+        }
+
+    }]
+});  
+     $.support.cors = true;
+        var chart = $('#charts').highcharts();
+        if(chart){
+           test1(chart);
+        }
+       
+        
+
+     function test1(what) {
+       var myURL = [];
+      
+     /*   console.log("test for chart call");*/
+        var obj = {}, what;
+        obj.svg = what.getSVG();
+        obj.type = 'image/png';
+        obj.width = 450; 
+        obj.async = true;
+        
+        exportUrl = 'http://export.highcharts.com/';
+        
+        $.ajax({
+            type: "POST",
+            url: exportUrl,
+            data: obj,
+            cache:false,
+            async:true,
+            crossDomain:true,
+            success: function (data) {
+                 console.log("success = "+exportUrl+data);
+                  myURL[0] = data;
+                  resURL = exportUrl + data;
+                  console.log(resURL);
+                  Android.setData(resURL);
+                  
+               
+              /*  console.log("test:"+$("#theurl").text());*/
+            },
+            error: function(data) {
+                alert("----"+data.status);
+                alert(data.statusText);
+            }
+        });
+        
+    }      
+    
+}
+
+</script>

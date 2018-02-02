@@ -1,1 +1,23 @@
 Stock Market Quote Android APP
+
+In this app, user can input stock symbol with autocomplete, the app will use volley to make asynchronous Http get request to fetch the JSON data,
+parse it and display tables and chart using Highchart API.
+
+User can add stock tickers they are interested in to the favorite list with SharedPreference.
+
+User can manage their favorite list by using different sorting method and setting auto fresh. As the result, they can see the stock information
+change dynamically. 
+
+User can also post the stock chart on facebook.
+
+
+
+AutocompleteAdapter.java. FavoriteList.java, News_Table.java, Table_java are all adapters for autocomplete or draw tables
+
+MainActivity.java and Main2Activity.java are the Activity of the app
+
+SortBy##.java are sorting class
+
+tab1,tab2,tab3.java are three tabs for Main2Activity.java, which displaying stock table and chart, historical chart and news.
+
+All the html files are used for facebook sharing as we use Webview of Android Studio
